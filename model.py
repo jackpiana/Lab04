@@ -1,115 +1,77 @@
 import dictionary as d
 import richWord as rw
 
+dz = d.Dictionary()
+
+
 class MultiDictionary:
 
     def __init__(self):
-        self._english = d.Dictionary([], "english")
-        self._italian = d.Dictionary([], "italian")
-        self._spanish = d.Dictionary([], "spanish")
+        self._dizionari = {"italian": dz.loadDictionary("resources/Italian.txt"),
+                           "english": dz.loadDictionary("resources/English.txt"),
+                           "spanish": dz.loadDictionary("resources/Spanish.txt")}
 
-        self._english.loadDictionary("resources/English.txt")
-        self._italian.loadDictionary("resources/Italian.txt")
-        self._spanish.loadDictionary("resources/Spanish.txt")
 
     def printDic(self, language):
-        if language == "english":
-            self._english.printAll()
-        elif language == "italian":
-            self._italian.printAll()
-        elif language == "spanish":
-            self._spanish.printAll()
-        else:
-            print("Language not supported")
+        print(self._dizionari[language.lower()])
 
     def searchWord(self, words, language):
-        # words is a list of strings
-        parole = []
-
+        errate = []
+        diz = self._dizionari[language.lower()]
         for word in words:
-            word = word.lower()
-            found = False
-            richW = rw.RichWord(word)
-            if language == "english":
-                if self._english.dict.__contains__(word):
-                    found = True
-            elif language == "italian":
-                if self._italian.dict.__contains__(word):
-                    found = True
-            elif language == "spanish":
-                if self._spanish.dict.__contains__(word):
-                    found = True
-            if (found):
-                richW.corretta = True
-
-            parole.append(richW)
-
-        return parole
+            if not word in diz:
+                errate.append(word)
+        print("Parole errate using contains: ")
+        if len(errate) == 0:
+            print("Nessuna parola errata rilevata")
+        for word in errate:
+            print(word)
+        return errate
 
     def searchWordLinear(self, words, language):
-        # words is a list of strings
-        parole = []
-
+        errate = []
+        diz = self._dizionari[language.lower()]
         for word in words:
-            word = word.lower()
-            found = False
-            richW = rw.RichWord(word)
-            if language == "english":
-                for entry in self._english.dict:
-                    if entry == word:
-                        found = True
-            elif language == "italian":
-                for entry in self._italian.dict:
-                    if entry == word:
-                        found = True
-            elif language == "spanish":
-                for entry in self._spanish.dict:
-                    if entry == word:
-                        found = True
-            if (found):
-                richW.corretta = True
+            for i in range(len(diz)):
+                if diz[i] == word:
+                    break
+                if diz[i] != word and i == len(diz) - 1:
+                    errate.append(word)
+        print("Parole errate using linear search: ")
+        if len(errate) == 0:
+            print("Nessuna parola errata rilevata")
+        for word in errate:
+            print(word)
+        return errate
 
-            parole.append(richW)
-
-        return parole
 
     def searchWordDichotomic(self, words, language):
-        # words is a list of strings
-        parole = []
-
+        errate = []
+        diz = self._dizionari[language.lower()]
+        l = len(diz)
+        ref = diz[int(l / 2)]
         for word in words:
-            word = word.lower()
-            found = False
-            richW = rw.RichWord(word)
-            if language == "english":
-                currentDic = self._english.dict
-                found = dichotomicSearch(word, currentDic)
-            elif language == "italian":
-                currentDic = self._italian.dict
-                found = dichotomicSearch(word, currentDic)
-            elif language == "spanish":
-                currentDic = self._spanish.dict
-                found = dichotomicSearch(word, currentDic)
-            if (found):
-                richW.corretta = True
+            if word > ref:
+                for i in range(int(l / 2), l):
+                    if diz[i] == word:
+                        break
+                    if diz[i] != word and i == l - 1:
+                        errate.append(word)
+            if word < ref:
+                for i in range(0, int(l / 2)):
+                    if diz[i] == word:
+                        break
+                    if diz[i] != word and i == int(l / 2) - 1:
+                        errate.append(word)
+            if word == ref:
+                continue
+        print("Parole errate using dichotomic search: ")
+        if len(errate) == 0:
+            print("Nessuna parola errata rilevata")
+        for word in errate:
+            print(word)
+        return errate
 
-            parole.append(richW)
 
-        return parole
-
-
-def dichotomicSearch(word, currentDic):
-    start = 0
-    end = len(currentDic)
-
-    while (start != end):
-        mean = start + int((end - start)/2)
-        currentW = currentDic[mean]
-        if word == currentW:
-            return True
-        elif word > currentW:  # in python < applied to strings gives True if the first string is before in lexicographic order
-            start = mean+1
-        else:
-            end = mean
-
-    return False
+if __name__ == "__main__":
+    pass

@@ -9,40 +9,36 @@ class SpellChecker:
         self._view = view
 
     def handleSentence(self, txtIn, language, modality):
+        if txtIn is None or language is None or modality is None:
+            self._view.create_alert("inserire tutti i parametri!")
+            return
         txtIn = replaceChars(txtIn.lower())
-
         words = txtIn.split()
         paroleErrate = " - "
 
         match modality:
             case "Default":
                 t1 = time.time()
-                parole = self._multiDic.searchWord(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " - "
+                errate = self._multiDic.searchWord(words, language)
                 t2 = time.time()
-                return paroleErrate, t2 - t1
+                tempo = (t2 - t1)
+                self._view.add_output(tempo, errate)
 
             case "Linear":
                 t1 = time.time()
-                parole = self._multiDic.searchWordLinear(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " "
+                errate = self._multiDic.searchWordLinear(words, language)
                 t2 = time.time()
-                return paroleErrate, t2 - t1
+                tempo = (t2 - t1)
+                self._view.add_output(tempo, errate)
+
 
             case "Dichotomic":
                 t1 = time.time()
                 parole = self._multiDic.searchWordDichotomic(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " - "
                 t2 = time.time()
-                return paroleErrate, t2 - t1
-            case _:
-                return None
+                tempo = (t2 - t1)
+                self._view.add_output(tempo, parole)
+
 
 
     def printMenu(self):
