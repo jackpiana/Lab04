@@ -1,4 +1,5 @@
 import flet as ft
+from flet_core import MainAxisAlignment
 
 import controller
 from controller import SpellChecker
@@ -35,7 +36,7 @@ class View(object):
         self.__theme_switch = ft.Switch(label="Light theme", on_change=self.theme_changed)
         self.page.controls.append(
             ft.Row(spacing=30, controls=[self.__theme_switch, self.__title, ],
-                   alignment=ft.MainAxisAlignment.START)
+                   alignment= MainAxisAlignment.SPACE_EVENLY)
         )
 
         # Add your stuff here
@@ -53,8 +54,8 @@ class View(object):
         for op in [op11, op22, op33]:
             self.dd_lang.options.append(op)
 
-        row1 = ft.Row(controls= [self.dd_mode, self.dd_lang])
-        row2 = ft.Row(controls= [self.tf, self.btnTraduci])
+        row1 = ft.Row(controls= [self.dd_mode, self.dd_lang], alignment= MainAxisAlignment.SPACE_EVENLY)
+        row2 = ft.Row(controls= [self.tf, self.btnTraduci], alignment= MainAxisAlignment.SPACE_EVENLY)
 
         self.page.add(row1, row2)
 
